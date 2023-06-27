@@ -10,8 +10,8 @@ int main()
     setlocale(LC_CTYPE, "rus");
     cout << "количество процессоров: " << omp_get_num_procs() << "\n";
 
-    const int n = 1000000;
-    int number_of_threads = 2;
+    const int n = 10000000;
+    int number_of_threads = 32;
 
     // Создание массива одинарной точности
     float* Asgl = new float[n];
