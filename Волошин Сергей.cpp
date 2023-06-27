@@ -56,4 +56,62 @@ int main()
     double end4 = omp_get_wtime();
     cout << "Время параллельного суммирования массива двойной точности: " << (end4 - start4) << "\n";
     cout << "\n";
+    const int m = 100;
+    // Создание и заполнение матриц Bsgl, Csgl и Bdbl, Cdbl
+    double** Bsgl = new double* [m];
+    for (int i = 0; i < m; i++) {
+        Bsgl[i] = new double[m];
+        for (int j = 0; j < m; j++) {
+            Bsgl[i][j] = rand();
+        }
+    }
+
+    double** Csgl = new double* [m];
+    for (int i = 0; i < m; i++) {
+        Csgl[i] = new double[m];
+    }
+
+    double** Bdbl = new double* [m];
+    for (int i = 0; i < m; i++) {
+        Bdbl[i] = new double[m];
+        for (int j = 0; j < m; j++) {
+            Bdbl[i][j] = rand();
+        }
+    }
+
+    double** Cdbl = new double* [m];
+    for (int i = 0; i < m; i++) {
+        Cdbl[i] = new double[m];
+    }
+
+    // Умножение матриц Bsgl и Bdbl для создания матриц Csgl (последовательный код)
+    double start5 = omp_get_wtime();
+
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < m; j++) {
+            Csgl[i][j] = 0;
+            for (int k = 0; k < m; k++) {
+                Csgl[i][j] += Bsgl[i][k] * Bdbl[k][j];
+            }
+        }
+    }
+    double end5 = omp_get_wtime();
+    cout << "Время последовательного умножения матриц: " << (end5 - start5) << "\n";
+    cout << "\n";
+
+    // Умножение матриц Bsgl и Bdbl для создания матриц Cdbl (параллельный код)
+    double start6 = omp_get_wtime();
+#pragma omp parallel num_threads(number_of_threads)
+    {
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                Cdbl[i][j] = 0;
+                for (int k = 0; k < m; k++) {
+                    Cdbl[i][j] += Bsgl[i][k] * Bdbl[k][j];
+                }
+            }
+        }
+    }
+    double end6 = omp_get_wtime();
+    cout << "Время параллельного умножения матриц: " << (end6 - start6) << "\n";
 }
